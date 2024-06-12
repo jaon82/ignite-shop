@@ -1,5 +1,5 @@
 import { stripe } from "@/lib/stripe";
-import { HomeContainer, Product } from "@/styles/pages/home";
+import { HomeContainer, Product, ProductInfo } from "@/styles/pages/home";
 import { useKeenSlider } from "keen-slider/react";
 import { GetStaticProps } from "next";
 import Image from "next/image";
@@ -7,6 +7,9 @@ import Stripe from "stripe";
 
 import "keen-slider/keen-slider.min.css";
 import Head from "next/head";
+
+import { useRouter } from "next/navigation";
+import { Handbag } from "phosphor-react";
 
 interface HomeProps {
   products: {
@@ -17,12 +20,17 @@ interface HomeProps {
   }[];
 }
 export default function Home({ products }: HomeProps) {
+  const router = useRouter();
   const [sliderRef] = useKeenSlider({
     slides: {
       perView: 3,
       spacing: 48,
     },
   });
+
+  const handleAddToCart = (productId: string) => {
+    router.push(`product/${productId}`);
+  };
 
   return (
     <>
@@ -31,17 +39,19 @@ export default function Home({ products }: HomeProps) {
       </Head>
       <HomeContainer ref={sliderRef} className="keen-slider">
         {products.map((product) => (
-          <Product
-            className="keen-slider__slide"
-            key={product.id}
-            href={`/product/${product.id}`}
-            prefetch={false}
-          >
+          <Product className="keen-slider__slide" key={product.id}>
             <Image src={product.imageUrl} width={520} height={480} alt="" />
 
             <footer>
-              <strong>{product.name}</strong>
-              <span>{product.price}</span>
+              <ProductInfo>
+                <strong>{product.name}</strong>
+                <span>{product.price}</span>
+              </ProductInfo>
+              <div>
+                <button onClick={() => handleAddToCart(product.id)}>
+                  <Handbag size={32} />
+                </button>
+              </div>
             </footer>
           </Product>
         ))}
