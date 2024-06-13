@@ -1,7 +1,26 @@
-import { styled } from "@/styles";
-import Link from "next/link";
+import { keyframes, styled } from "@/styles";
+
+const fadeIn = keyframes({
+  "0%": { opacity: "0" },
+  "100%": { opacity: "1" },
+});
+
+const fadeOut = keyframes({
+  "0%": { opacity: "0" },
+  "100%": { opacity: "1" },
+});
 
 export const OrderContainer = styled("div", {
+  variants: {
+    show: {
+      true: {
+        display: "flex",
+      },
+      false: {
+        display: "none",
+      },
+    },
+  },
   display: "flex",
   flexDirection: "column",
   justifyContent: "space-between",
@@ -11,6 +30,7 @@ export const OrderContainer = styled("div", {
   top: 0,
   height: "100%",
   padding: "3rem",
+  zIndex: 1,
 });
 
 export const CloseContainer = styled("div", {
@@ -32,10 +52,25 @@ export const OrderTitle = styled("h2", {
   color: "$gray100",
 });
 
-export const OrderItems = styled("div", {
+export const OrderItem = styled("div", {
   display: "flex",
   justifyContent: "space-between",
   gap: "1.25rem",
+});
+
+export const ImageContainer = styled("div", {
+  width: 95,
+  height: 95,
+  background: "linear-gradient(180deg, #1ea483 0%, #7465d4 100%)",
+  borderRadius: 8,
+
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+
+  img: {
+    objectFit: "cover",
+  },
 });
 
 export const ItemInfo = styled("div", {
@@ -53,7 +88,11 @@ export const ItemPrice = styled("span", {
   fontWeight: "bold",
 });
 
-export const RemoveLink = styled(Link, {
+export const RemoveLink = styled("button", {
+  background: "none",
+  border: "none",
+  cursor: "pointer",
+  width: "fit-content",
   color: "$green500",
   fontWeight: "bold",
   textDecoration: "none",

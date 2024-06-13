@@ -28,7 +28,7 @@ export default function Home({ products }: HomeProps) {
     },
   });
 
-  const handleAddToCart = (productId: string) => {
+  const handleShowProduct = (productId: string) => {
     router.push(`product/${productId}`);
   };
 
@@ -48,7 +48,7 @@ export default function Home({ products }: HomeProps) {
                 <span>{product.price}</span>
               </ProductInfo>
               <div>
-                <button onClick={() => handleAddToCart(product.id)}>
+                <button onClick={() => handleShowProduct(product.id)}>
                   <Handbag size={32} />
                 </button>
               </div>

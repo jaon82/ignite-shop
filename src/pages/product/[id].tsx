@@ -1,9 +1,8 @@
-import axios from "axios";
 import { GetStaticPaths, GetStaticProps } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { useState } from "react";
 import Stripe from "stripe";
+import { useShoppingCart } from "use-shopping-cart";
 import { stripe } from "../../lib/stripe";
 import {
   ImageContainer,
@@ -16,28 +15,21 @@ interface ProductProps {
     id: string;
     name: string;
     imageUrl: string;
-    price: string;
+    price: number;
     description: string;
     defaultPriceId: string;
+    currency: string;
+    formattedPrice: string;
   };
 }
 
 export default function Product({ product }: ProductProps) {
-  const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] =
-    useState(false);
+  const { addItem } = useShoppingCart();
 
-  async function handleBuyButton() {
+  async function handleAddToCart() {
     try {
-      setIsCreatingCheckoutSession(true);
-      const response = await axios.post("/api/checkout", {
-        priceId: product.defaultPriceId,
-      });
-      const { checkoutUrl } = response.data;
-      window.location.href = checkoutUrl;
-    } catch (err) {
-      setIsCreatingCheckoutSession(false);
-      alert("Falha ao redirecionar ao checkout!");
-    }
+      addItem({ ...product });
+    } catch (err) {}
   }
 
   return (
@@ -52,16 +44,11 @@ export default function Product({ product }: ProductProps) {
 
         <ProductDetails>
           <h1>{product.name}</h1>
-          <span>{product.price}</span>
+          <span>{product.formattedPrice}</span>
 
           <p>{product.description}</p>
 
-          <button
-            disabled={isCreatingCheckoutSession}
-            onClick={handleBuyButton}
-          >
-            Colocar na sacola
-          </button>
+          <button onClick={handleAddToCart}>Colocar na sacola</button>
         </ProductDetails>
       </ProductContainer>
     </>
@@ -96,12 +83,14 @@ export const getStaticProps: GetStaticProps<any, { id: string }> = async ({
         id: product.id,
         name: product.name,
         imageUrl: product.images[0],
-        price: new Intl.NumberFormat("pt-BR", {
+        formattedPrice: new Intl.NumberFormat("pt-BR", {
           style: "currency",
           currency: "BRL",
         }).format(price.unit_amount! / 100),
+        price: price.unit_amount,
         description: product.description,
         defaultPriceId: price.id,
+        currency: "BRL",
       },
     },
     revalidate: 60 * 60 * 1, // 1 hours

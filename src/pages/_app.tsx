@@ -1,33 +1,37 @@
 import { globalStyles } from "@/styles/global";
-import { Container, Header, ItemsCounter } from "@/styles/pages/app";
+import { Container, Header } from "@/styles/pages/app";
 import type { AppProps } from "next/app";
 import Image from "next/image";
 
-import Order from "@/components/Order/intex";
+import Cart from "@/components/Cart";
 import Link from "next/link";
-import { Handbag } from "phosphor-react";
+import { useRouter } from "next/router";
+import { CartProvider } from "use-shopping-cart";
 import logoImg from "../assets/logo.svg";
 
 globalStyles();
 
 export default function App({ Component, pageProps }: AppProps) {
-  const handleAddToCart = () => {
-    console.log("ADD_TO_CART");
-  };
+  const {
+    query: { session_id: sessionId },
+  } = useRouter();
 
   return (
-    <Container>
-      <Header>
-        <Link href="/">
-          <Image src={logoImg} alt="" />
-        </Link>
-        <button onClick={handleAddToCart}>
-          <Handbag size={24} />
-          <ItemsCounter>3</ItemsCounter>
-        </button>
-      </Header>
-      <Order />
-      <Component {...pageProps} />
-    </Container>
+    <CartProvider
+      cartMode="checkout-session"
+      stripe={process.env.STRIPE_PUBLIC_KEY!}
+      currency="BRL"
+      shouldPersist={true}
+    >
+      <Container>
+        <Header successPage={!!sessionId}>
+          <Link href="/">
+            <Image src={logoImg} alt="" />
+          </Link>
+          {!sessionId && <Cart />}
+        </Header>
+        <Component {...pageProps} />
+      </Container>
+    </CartProvider>
   );
 }

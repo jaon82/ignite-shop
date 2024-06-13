@@ -53,7 +53,7 @@ export const Product = styled("div", {
     },
 
     button: {
-      backgroundColor: "$green300",
+      backgroundColor: "$green500",
       padding: "0.75rem",
       borderRadius: "6px",
       border: 0,
@@ -63,7 +63,7 @@ export const Product = styled("div", {
         cursor: "not-allowed",
       },
       "&:not(:disabled):hover": {
-        backgroundColor: "$green500",
+        backgroundColor: "$green300",
       },
       svg: {
         color: "$white",
